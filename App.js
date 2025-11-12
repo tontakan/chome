@@ -98,9 +98,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
 
-  const ai = new GoogleGenAI({
-    apiKey: window.GOOGLE_API_KEY,
-    vertexai: true
+ const ai = new GoogleGenAI({ apiKey: window.GOOGLE_API_KEY 
   });
 
   useEffect(() => {
