@@ -1,7 +1,17 @@
 import React,{useState,useRef,useEffect}from'react';
 import{GoogleGenAI}from'@google/genai';
 const UserIcon=()=>(React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',className:'h-6 w-6',fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:2},React.createElement('path',{strokeLinecap:'round',strokeLinejoin:'round',d:'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'})));
-const SparklesIcon=()=>(React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',className:'h-6 w-6',fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:2},React.createElement('path',{strokeLinecap:'round',strokeLinejoin:'round',d:'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.293 2.293a1 1 0 010 1.414L13 12l-1.293-1.293a1 1 0 010-1.414L14 7m5 5l2.293 2.293a1 1 0 010 1.414L19 19l-1.293-1.293a1 1 0 010-1.414L20 14m-4-13h.01M17 21h.01'})));
+const SparklesIcon = () => (
+  React.createElement(
+    'svg',
+    { xmlns: 'http://www.w3.org/2000/svg', className: 'h-6 w-6', fill: 'none', viewBox: '0 0 24 24', stroke: 'currentColor', strokeWidth: 2 },
+    React.createElement('path', {
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round',
+      d: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.293 2.293a1 1 0 010 1.414L13 12l-1.293-1.293a1 1 0 010-1.414L14 7m5 5l2.293 2.293a1 1 0 010 1.414L19 19l-1.293-1.293a1 1 0 010-1.414L20 14m-4-13h.01M17 21h.01'
+    })
+  )
+);
 const PaperAirplaneIcon=()=>(React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',className:'h-6 w-6',fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:2},React.createElement('path',{strokeLinecap:'round',strokeLinejoin:'round',d:'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'})));
 const LinkIcon=()=>(React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',className:'h-4 w-4 inline-block mr-2',fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:2},React.createElement('path',{strokeLinecap:'round',strokeLinejoin:'round',d:'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'})));
 const ExclamationTriangleIcon=()=>(React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',className:'h-5 w-5 text-red-500 mr-3',viewBox:'0 0 20 20',fill:'currentColor'},React.createElement('path',{fillRule:'evenodd',d:'M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z',clipRule:'evenodd'})));
