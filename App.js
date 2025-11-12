@@ -11,7 +11,7 @@ export default function App(){
   const[isLoading,setIsLoading]=useState(false);
   const[error,setError]=useState(null);
   const chatEndRef=useRef(null);
-  const ai=new GoogleGenAI({apiKey:window.AIzaSyDS2_5gYxFOJ4sGjNffFbqgSmPqQnweBTg,vertexai:true});
+  const ai=new GoogleGenAI({apiKey:window.AQ.Ab8RN6IZwR8pe4fJB1j8Cp7dsx4EyoY7CktNHVpLqx1TLVdm5g,vertexai:true});
   useEffect(()=>{chatEndRef.current&&chatEndRef.current.scrollIntoView({behavior:'smooth'})},[messages,isLoading]);
   const systemInstruction=`คุณคือ "ผู้ช่วยกฎหมาย AI" ซึ่งเป็นผู้เชี่ยวชาญด้านกฎหมายของประเทศไทย
 - ใช้ Google Search เสมอ
