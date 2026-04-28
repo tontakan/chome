@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC File Manager - รองรับปุ่ม F2</title>
+    <title>PC File Manager - Real-time Sync</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -38,7 +38,7 @@
             </div>
             <div>
                 <h1 class="font-bold text-base tracking-tight leading-none">PC Target Sync</h1>
-                <p class="text-[10px] text-indigo-500 font-black uppercase mt-1 tracking-widest">F2 Rename Enabled</p>
+                <p class="text-[10px] text-indigo-500 font-black uppercase mt-1 tracking-widest">Real-time Sync Active</p>
             </div>
         </div>
 
@@ -182,11 +182,11 @@
                     <div id="sync-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-200 transition-all duration-500"></div>
                     <span id="footer-path-display">PATH: UNINITIALIZED</span>
                 </div>
-                <span class="hidden sm:inline text-indigo-600 underline decoration-indigo-200 decoration-2 underline-offset-4">F2 Key Support Active</span>
+                <span class="hidden sm:inline text-indigo-600 underline decoration-indigo-200 decoration-2 underline-offset-4 font-bold uppercase tracking-widest">Live Path Sync</span>
             </div>
             <div class="flex gap-3 text-indigo-600 items-center">
                 <i data-lucide="keyboard" class="w-3.5 h-3.5"></i>
-                คลิกเลือกไฟล์แล้วกด [F2] เพื่อเปลี่ยนชื่อ
+                คลิกเลือกไฟล์แล้วกด [F2] เพื่อเปลี่ยนชื่อไฟล์จริง
             </div>
         </footer>
     </main>
@@ -246,7 +246,8 @@
                         name: entry.name,
                         ext: entry.name.split('.').pop().toLowerCase(),
                         updatedAt: new Date(file.lastModified).toLocaleDateString('th-TH'),
-                        size: (file.size / 1024).toFixed(1) + ' KB'
+                        size: (file.size / 1024).toFixed(1) + ' KB',
+                        handle: entry // เก็บ Handle ไว้สำหรับแก้ไขไฟล์จริง
                     });
                 }
             }
@@ -373,29 +374,58 @@
             }
         }
 
-        function modifyFileName(id) {
+        // ฟังก์ชันแก้ไขชื่อไฟล์แบบ Real-time
+        async function modifyFileName(id) {
             const file = allFiles.find(f => f.id === id);
             if (!file) return;
+
             const newName = prompt("เปลี่ยนชื่อไฟล์เป็น:", file.name);
             if (newName && newName !== file.name) {
-                allFiles = allFiles.map(f => f.id === id ? { ...f, name: newName, id: newName } : f);
-                // Also update selectedId if we just renamed the selected file
-                if (selectedFileId === id) selectedFileId = newName;
-                renderExplorer();
+                // หากเชื่อมต่อกับ PC จริง (ไม่ได้อยู่ในโหมดจำลอง)
+                if (!isSimulated && dirHandle && file.handle) {
+                    try {
+                        // เปลี่ยนชื่อไฟล์จริงใน PC โดยใช้ API move()
+                        await file.handle.move(newName);
+                        
+                        // สแกนไฟล์ใหม่เพื่อให้ UI อัปเดตข้อมูลล่าสุดจาก Disk จริง
+                        await scanLocalFiles();
+                        
+                        // อัปเดตสถานะการเลือกหากชื่อ ID เปลี่ยน
+                        if (selectedFileId === id) selectedFileId = newName;
+                    } catch (err) {
+                        console.error("Rename failed:", err);
+                        alert("ไม่สามารถเปลี่ยนชื่อไฟล์ใน PC ได้: " + err.message);
+                    }
+                } else {
+                    // โหมดจำลองข้อมูล
+                    allFiles = allFiles.map(f => f.id === id ? { ...f, name: newName, id: newName } : f);
+                    if (selectedFileId === id) selectedFileId = newName;
+                    renderExplorer();
+                }
             }
         }
 
-        function removeFile(id) {
-            if (confirm(`คุณต้องการลบ "${id}" หรือไม่?`)) {
-                allFiles = allFiles.filter(f => f.id !== id);
+        async function removeFile(id) {
+            if (confirm(`คุณต้องการลบ "${id}" จากเครื่องคอมพิวเตอร์หรือไม่?`)) {
+                if (!isSimulated && dirHandle) {
+                    try {
+                        // ลบไฟล์จริงออกจากเครื่อง
+                        await dirHandle.removeEntry(id);
+                        await scanLocalFiles();
+                    } catch (err) {
+                        console.error("Delete failed:", err);
+                        alert("ไม่สามารถลบไฟล์ได้: " + err.message);
+                    }
+                } else {
+                    allFiles = allFiles.filter(f => f.id !== id);
+                    renderExplorer();
+                }
                 if (selectedFileId === id) selectedFileId = null;
-                renderExplorer();
             }
         }
 
         // --- Keyboard Shortcut (F2) ---
         window.addEventListener('keydown', (e) => {
-            // Trigger F2 only if something is selected and not already in an input
             if (e.key === 'F2' && selectedFileId) {
                 const target = e.target;
                 if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
